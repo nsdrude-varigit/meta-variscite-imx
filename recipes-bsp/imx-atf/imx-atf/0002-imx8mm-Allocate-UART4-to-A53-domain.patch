@@ -1,4 +1,4 @@
-From d9b8910b0643d9197b894d0374c78d66881b63ce Mon Sep 17 00:00:00 2001
+From 39139f490d421131d14a607536bb777939f0f9f0 Mon Sep 17 00:00:00 2001
 From: Nate Drude <nate.d@variscite.com>
 Date: Thu, 20 Aug 2020 08:58:31 -0500
 Subject: [PATCH] imx8mm: Allocate UART4 to A53 domain
@@ -8,6 +8,7 @@ On Variscite i.MX8MM boards UART4 is used by Linux running on A53 domain.
 Allocate only UART2 to M4 domain.
 
 Signed-off-by: Nate Drude <nate.d@variscite.com>
+
 ---
  plat/imx/imx8m/imx8mm/imx8mm_bl31_setup.c | 1 -
  1 file changed, 1 deletion(-)
