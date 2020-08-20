@@ -6,7 +6,7 @@ KERNEL_IMAGETYPE_mx8 = "Image.gz"
 
 SOC_DEFAULT_WKS_FILE_mx8 = "imx-imx-boot-bootpart1.wks.in"
 
-DEFAULTTUNE_mx8mn  ?= "cortexa53-crypto"
+DEFAULTTUNE_mx8m  ?= "cortexa53-crypto"
 DEFAULTTUNE_mx8qxp ?= "cortexa35-crypto"
 
 PREFERRED_PROVIDER_u-boot-fw-utils = "u-boot-fw-utils"
