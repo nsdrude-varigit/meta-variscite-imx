@@ -17,6 +17,8 @@ do_compile_prepend() {
 		cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mm-var-som-rev10.dtb ${S}/iMX8M/
 	fi
 
+	echo ${S}/iMX8M/ > /tmp/imx-boot.dbg
+
 	if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mn-var-som-rev10.dtb ]; then
 		cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mn-var-som-rev10.dtb ${S}/iMX8M/
 	fi
