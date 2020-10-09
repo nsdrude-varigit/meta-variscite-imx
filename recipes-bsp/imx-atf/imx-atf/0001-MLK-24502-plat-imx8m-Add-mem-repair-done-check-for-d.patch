@@ -1,0 +1,82 @@
+From 066d6232933a7afd1c53c55ce2449a83bd8ccb29 Mon Sep 17 00:00:00 2001
+From: Jacky Bai <ping.bai@nxp.com>
+Date: Fri, 14 Aug 2020 15:30:08 +0800
+Subject: [PATCH] MLK-24502 plat: imx8m: Add mem repair done check for domain
+
+ that need repair
+
+The memory repair clock should be disabled before domain power up,
+and enabled after power up. need to check the memory repair done
+status that need memory repair.
+
+Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+Reviewed-by: Anson Huang <anson.huang@nxp.com>
+
+---
+ plat/imx/imx8m/imx8mp/gpc.c | 38 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 35 insertions(+), 3 deletions(-)
+
+diff --git a/plat/imx/imx8m/imx8mp/gpc.c b/plat/imx/imx8m/imx8mp/gpc.c
+index 89631a249..952278a7c 100644
+--- a/plat/imx/imx8m/imx8mp/gpc.c
++++ b/plat/imx/imx8m/imx8mp/gpc.c
+@@ -337,6 +337,32 @@ void imx_aips5_init(void)
+ 	mmio_write_32(0x30df0050, 0x0);
+ }
+ 
++void wait_memrepair_done(uint32_t domain_id)
++{
++	switch(domain_id) {
++	case HDMIMIX:
++		mmio_clrsetbits_32(IMX_SRC_BASE + 0x94, 0x7 << 4, 0x0 << 4);
++		break;
++	case AUDIOMIX:
++		mmio_clrsetbits_32(IMX_SRC_BASE + 0x94, 0x7 << 4, 0x1 << 4);
++		break;
++	case MLMIX:
++		mmio_clrsetbits_32(IMX_SRC_BASE + 0x94, 0x7 << 4, 0x2 << 4);
++		break;
++	case VPU_G1:
++		mmio_clrsetbits_32(IMX_SRC_BASE + 0x94, 0x7 << 4, 0x4 << 4);
++		break;
++	case VPU_H1:
++		mmio_clrsetbits_32(IMX_SRC_BASE + 0x94, 0x7 << 4, 0x5 << 4);
++		break;
++	default:
++		return;
++	}
++
++	do {
++	} while (!(mmio_read_32(IMX_SRC_BASE + 0x94) & BIT(8)));
++}
++
+ void imx_gpc_pm_domain_enable(uint32_t domain_id, bool on)
+ {
+ 	struct imx_pwr_domain *pwr_domain = &pu_domains[domain_id];
+@@ -362,6 +388,9 @@ void imx_gpc_pm_domain_enable(uint32_t domain_id, bool on)
+ 			mmio_write_32(0x32fc0050, 0x7ffff87e);
+ 		}
+ 
++		/* disable the memory repair clock before power up */
++		mmio_write_32(IMX_CCM_BASE + 0x4640, 0x0);
++
+ 		/* clear the PGC bit */
+ 		mmio_clrbits_32(IMX_GPC_BASE + pwr_domain->pgc_offset, 0x1);
+ 
+@@ -371,10 +400,13 @@ void imx_gpc_pm_domain_enable(uint32_t domain_id, bool on)
+ 		/* wait for power request done */
+ 		while (mmio_read_32(IMX_GPC_BASE + PU_PGC_UP_TRG) & pwr_domain->pwr_req);
+ 
++		/* enable the memory repair clock after power up */
++		mmio_write_32(IMX_CCM_BASE + 0x4640, 0x3);
++
++		/* wait for memory repair done */
++		wait_memrepair_done(domain_id);
++
+ 		if (domain_id == HDMIMIX) {
+-			/* wait for memory repair done for HDMIMIX */
+-			while(!(mmio_read_32(IMX_SRC_BASE + 0x94) & BIT(8)))
+-				;
+ 			/* disable all the function clock */
+ 			mmio_write_32(0x32fc0040, 0x0);
+ 			mmio_write_32(0x32fc0050, 0x0);

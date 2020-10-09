@@ -1,0 +1,26 @@
+From 0247627d7dbd5fad024b27cfa5a7a4348b023215 Mon Sep 17 00:00:00 2001
+From: Nate Drude <nate.d@variscite.com>
+Date: Thu, 8 Oct 2020 12:51:15 -0500
+Subject: [PATCH] imx8mq: Enable ATF Console
+
+---
+ plat/imx/imx8m/imx8mq/include/platform_def.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/plat/imx/imx8m/imx8mq/include/platform_def.h b/plat/imx/imx8m/imx8mq/include/platform_def.h
+index 6d838fc3c..e0c450654 100644
+--- a/plat/imx/imx8m/imx8mq/include/platform_def.h
++++ b/plat/imx/imx8m/imx8mq/include/platform_def.h
+@@ -150,5 +150,10 @@
+ #define CNTFID1_OFF			U(0x24)
+ #define COUNTER_FREQUENCY		8000000 /* 8MHz */
+ 
+-#define DEBUG_CONSOLE			0
++#define DEBUG_CONSOLE			1
+ #define IMX_WDOG_B_RESET
++
++#ifdef LOG_LEVEL
++#undef LOG_LEVEL
++#endif
++#define LOG_LEVEL LOG_LEVEL_VERBOSE
+\ No newline at end of file
