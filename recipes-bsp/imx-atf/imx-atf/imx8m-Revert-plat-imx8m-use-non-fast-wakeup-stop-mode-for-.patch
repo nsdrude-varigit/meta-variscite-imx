@@ -1,0 +1,26 @@
+From 7b569e473b1678b786259245cac4d7623c591ae5 Mon Sep 17 00:00:00 2001
+From: Nate Drude <nate.d@variscite.com>
+Date: Mon, 19 Oct 2020 11:32:49 -0500
+Subject: [PATCH] Revert "plat: imx8m: use non-fast wakeup stop mode for system
+ suspend"
+
+This fixes a resume from suspend problem on imx8mq rev B0
+
+Signed-off-by: Nate Drude <nate.d@variscite.com>
+---
+ plat/imx/imx8m/gpc_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plat/imx/imx8m/gpc_common.c b/plat/imx/imx8m/gpc_common.c
+index 7a8837ef2..7fa84ca97 100644
+--- a/plat/imx/imx8m/gpc_common.c
++++ b/plat/imx/imx8m/gpc_common.c
+@@ -256,7 +256,7 @@ void imx_set_sys_lpm(unsigned int last_core, bool retention)
+ {
+ 	if (retention)
+ 		mmio_clrsetbits_32(IMX_GPC_BASE + SLPCR, SLPCR_A53_FASTWUP_STOP_MODE,
+-			SLPCR_EN_DSM | SLPCR_VSTBY | SLPCR_SBYOS | SLPCR_BYPASS_PMIC_READY);
++			SLPCR_EN_DSM | SLPCR_VSTBY | SLPCR_SBYOS | SLPCR_BYPASS_PMIC_READY | SLPCR_A53_FASTWUP_STOP_MODE);
+ 	else
+ 		mmio_clrsetbits_32(IMX_GPC_BASE + SLPCR, SLPCR_EN_DSM | SLPCR_VSTBY |
+ 			 SLPCR_SBYOS | SLPCR_BYPASS_PMIC_READY, SLPCR_A53_FASTWUP_STOP_MODE);
