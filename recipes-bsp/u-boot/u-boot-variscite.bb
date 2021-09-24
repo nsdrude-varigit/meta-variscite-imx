@@ -3,6 +3,7 @@
 # Copyright 2018-2019 Variscite Ltd.
 
 SUMMARY = "U-Boot for Variscite's i.MX boards"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 require recipes-bsp/u-boot/u-boot.inc
 inherit pythonnative
 
@@ -16,6 +17,8 @@ inherit fsl-u-boot-localversion
 LOCALVERSION ?= "-${SRCBRANCH}"
 
 BOOT_TOOLS = "imx-boot-tools"
+
+SRC_URI_append_hab += "file://u-boot-hab.cfg"
 
 do_deploy_append_mx8m () {
     # Deploy the mkimage, u-boot-nodtb.bin and the U-Boot dtb for mkimage to generate boot binary
